@@ -106,6 +106,70 @@ def multiply(matrix: list[list[float]], vector: list[float]) -> list[float]:
 
     return P
 
+# TASK 3: Solving using Cramer’s Rule
+def solve_cramer(matrix: list[list[float]], vector: list[float]) -> list[float]:
+    AX = copy.deepcopy(A)
+    AY = copy.deepcopy(A)
+    AZ = copy.deepcopy(A)
+    '''
+    Pentru a stii dimenisunea matricelor
+    cu [[],[],[]] dadea index out of bounds
+    AX=A.copy nu este suficient la lsite de liste
+    '''
+    for column in range(3):
+        for line in range(3):
+            if column==0: AX[line][column] = vector[line]
+            if column==1: AY[line][column] = vector[line]
+            if column==2: AZ[line][column] = vector[line]
+
+    #print(AX, AY, AZ)
+
+    x=determinant(AX)/determinant(A)
+    y=determinant(AY)/determinant(A)
+    z=determinant(AZ)/determinant(A)
+
+    return [x, y, z]
+
+
+# TASK 4: Solving using Cramer’s Rule
+def minor(matrix: list[list[float]], i: int, j: int) -> list[list[float]]:
+    M = [[],[]]
+    el=0
+    for line in range(3):
+        for column in range(3):
+            if line!=i and column!=j:
+                if (el==0 or el==1): M[0].append(matrix[line][column])
+                if (el==2 or el==3): M[1].append(matrix[line][column])
+                el+=1
+
+    return M
+
+def cofactor(matrix: list[list[float]]) -> list[list[float]]:
+    C=copy.deepcopy(matrix)
+    for line in range(3):
+        for column in range(3):
+            Minor=minor(matrix,line,column)
+            det_2x2=Minor[0][0]*Minor[1][1]-Minor[1][0]*Minor[0][1]
+            C[line][column]=det_2x2
+            if (line+column)%2==1: C[line][column]*=-1
+
+    return C
+
+def adjoint(matrix: list[list[float]]) -> list[list[float]]:
+    return transpose(cofactor(matrix))
+
+
+def solve(matrix: list[list[float]], vector: list[float]) -> list[float]:
+    scalar= 1/determinant(matrix)
+    inverse = copy.deepcopy(adjoint(matrix))
+
+    for i in range(3):
+        for j in range(3):
+            inverse[i][j]*=scalar
+
+    Result=multiply(inverse,vector)
+    return Result
+
 
 
 
@@ -117,7 +181,8 @@ print(f"{trace(A)=}")
 print(f"{norm(B)=}")
 print(f"{transpose(A)=}")
 print(f"{multiply(A, B)=}")
-
+print(f"{solve_cramer(A, B)=}")
+print(f"{solve(A, B)=}")
 '''
 A=[[2, 3, -1], [1, -1, 4], [3, 1, 2]] B=[5, 6, 7]
 determinant(A)=14
@@ -125,4 +190,5 @@ trace(A)=3
 norm(B)=10.488088481701515
 transpose(A)=[[2, 1, 3], [3, -1, 1], [-1, 4, 2]]
 multiply(A, B)=[21, 27, 35]
+solve_cramer(A, B)=(0.35714285714285715, 2.0714285714285716, 1.9285714285714286)
 '''
