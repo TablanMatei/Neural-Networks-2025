@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 class ExtendedMNISTDataset(Dataset):
-     def __init__(self, root: str = "data", train: bool = True):
+     def __init__(self, root: str = "/kaggle/input/fii-nn-2025-homework-4", train: bool = True):
         file = "extended_mnist_test.pkl"
         if train:
             file = "extended_mnist_train.pkl"
@@ -43,24 +43,28 @@ test_data = np.array(test_data)
 train_data = train_data.astype('float32') / 255.0
 test_data = test_data.astype('float32') / 255.0
 
-'''..................AICI'''
+
 
 
 
 from sklearn.neural_network import MLPClassifier
 
 mlp = MLPClassifier(
-    hidden_layer_sizes=(256,128,64),
+    hidden_layer_sizes=(512, 256, 128),
     alpha=1e-5,
     activation='relu',
     solver="sgd",
     verbose=10,
     random_state=1,
     learning_rate_init=0.1,
-    learning_rate='adaptive',
     early_stopping=True,
     validation_fraction=0.1,
 )
+
+'''..................AICI'''
+
+
+
 print("\nStarting training...")
 mlp.fit(train_data, train_labels)
 train_accuracy = mlp.score(train_data, train_labels)
